@@ -1,0 +1,37 @@
+{
+  "version": "0.0.0-development",
+  "name": "@ahmadnassri/debug",
+  "description": "Debugging utility using environment regex, matches node core's debugging technique",
+  "author": "Ahmad Nassri <ahmad@ahmadnassri.com> (https://www.ahmadnassri.com/)",
+  "homepage": "https://github.com/ahmadnassri/node-debug",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ahmadnassri/node-debug.git"
+  },
+  "license": "ISC",
+  "main": "lib/index.js",
+  "keywords": [
+    "debug",
+    "regex"
+  ],
+  "engines": {
+    "node": ">=4"
+  },
+  "files": [
+    "lib"
+  ],
+  "bugs": {
+    "url": "https://github.com/ahmadnassri/node-debug/issues"
+  },
+  "scripts": {
+    "lint": "standard && echint",
+    "pretest": "npm run lint",
+    "test": "tap test",
+    "coverage": "tap test --reporter silent --coverage"
+  },
+  "devDependencies": {
+    "echint": "^4.0.1",
+    "standard": "^9.0.2",
+    "tap": "^10.3.0"
+  }
+}
