@@ -1,75 +1,80 @@
-'use strict'
+const debuglog = require('..')
+const { beforeEach, afterEach, test } = require('tap')
+const sinon = require('sinon')
 
-const debug = require('..')
-const tap = require('tap')
+beforeEach(() => {
+  sinon.stub(console, 'error')
+});
 
-tap.afterEach(done => {
+afterEach(() => {
   delete process.env.DEBUG
   delete process.env.NODE_DEBUG
 
-  done()
+  console.error.restore()
 })
 
-tap.test('DEBUG=FOO', assert => {
+test('DEBUG=FOO', assert => {
   assert.plan(2)
 
   process.env.DEBUG = 'FOO'
 
-  const func = debug('foo', (_, set, pid, message) => {
-    assert.equal(set, 'FOO')
-    assert.equal(message, 'bar')
-  })
+  const debug = debuglog('foo')
 
-  func('bar')
+  debug('bar')
+
+  assert.ok(console.error.called)
+  assert.same(console.error.lastCall.args, ['%s %d: %s', 'FOO', process.pid, 'bar'])
 })
 
-tap.test('NODE_DEBUG=FOO', assert => {
+test('NODE_DEBUG=FOO', assert => {
   assert.plan(2)
 
   process.env.NODE_DEBUG = 'FOO'
 
-  const func = debug('foo', (_, set, pid, message) => {
-    assert.equal(set, 'FOO')
-    assert.equal(message, 'bar')
-  })
+  const debug = debuglog('foo')
 
-  func('bar')
+  debug('bar')
+
+  assert.ok(console.error.called)
+  assert.same(console.error.lastCall.args, ['%s %d: %s', 'FOO', process.pid, 'bar'])
 })
 
-tap.test('DEBUG=BAR, FOO', assert => {
+test('DEBUG=BAR, FOO', assert => {
   assert.plan(2)
 
   process.env.DEBUG = 'BAR, FOO'
 
-  const func = debug('foo', (_, set, pid, message) => {
-    assert.equal(set, 'FOO')
-    assert.equal(message, 'bar')
-  })
+  const debug = debuglog('foo')
 
-  func('bar')
+  debug('bar')
+
+  assert.ok(console.error.called)
+  assert.same(console.error.lastCall.args, ['%s %d: %s', 'FOO', process.pid, 'bar'])
 })
 
-tap.test('DEBUG=BAZ, BAR', assert => {
-  assert.plan(0)
+test('DEBUG=BAZ, BAR', assert => {
+  assert.plan(1)
 
   process.env.DEBUG = 'BAZ, BAR'
 
-  const func = debug('foo', (_, set, pid, message) => {
-    assert.error('should not trigger')
-  })
+  const debug = debuglog('foo')
 
-  func('bar')
+  debug('bar')
+
+  assert.notOk(console.error.called, 'should not trigger')
+
+  debug('bar')
 })
 
-tap.test('DEBUG=F.*', assert => {
+test('DEBUG=F.*', assert => {
   assert.plan(2)
 
   process.env.DEBUG = 'F.*'
 
-  const func = debug('foo', (_, set, pid, message) => {
-    assert.equal(set, 'FOO')
-    assert.equal(message, 'bar')
-  })
+  const debug = debuglog('foo')
 
-  func('bar')
+  debug('bar')
+
+  assert.ok(console.error.called)
+  assert.same(console.error.lastCall.args, ['%s %d: %s', 'FOO', process.pid, 'bar'])
 })

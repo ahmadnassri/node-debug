@@ -1,37 +1,42 @@
 {
-  "version": "0.0.0-development",
+  "version": "0.0.0-semantically-released",
   "name": "@ahmadnassri/debug",
   "description": "Debugging utility using environment regex, matches node core's debugging technique",
-  "author": "Ahmad Nassri <ahmad@ahmadnassri.com> (https://www.ahmadnassri.com/)",
+  "author": "Ahmad Nassri <opensource@ahmadnassri.net> (https://www.ahmadnassri.com)",
   "homepage": "https://github.com/ahmadnassri/node-debug",
   "repository": {
     "type": "git",
     "url": "https://github.com/ahmadnassri/node-debug.git"
   },
-  "license": "ISC",
-  "main": "lib/index.js",
+  "bugs": {
+    "url": "https://github.com/ahmadnassri/node-debug/issues"
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/sponsors/ahmadnassri"
+  },
+  "license": "MIT",
   "keywords": [
     "debug",
     "regex"
   ],
   "engines": {
-    "node": ">=4"
+    "node": ">=14"
   },
   "files": [
-    "lib"
+    "src"
   ],
-  "bugs": {
-    "url": "https://github.com/ahmadnassri/node-debug/issues"
-  },
+  "main": "src/index.js",
   "scripts": {
-    "lint": "standard && echint",
-    "pretest": "npm run lint",
-    "test": "tap test",
-    "coverage": "tap test --reporter silent --coverage"
+    "test": "tap test --no-coverage",
+    "test:ci": "tap test --100",
+    "test:watch": "tap test --watch",
+    "test:report": "opener coverage/lcov-report/index.html"
   },
   "devDependencies": {
-    "echint": "^4.0.1",
-    "standard": "^12.0.0",
-    "tap": "^14.9.2"
+    "tap": "^16.3.2"
+  },
+  "dependencies": {
+    "sinon": "^15.0.1"
   }
 }
