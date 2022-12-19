@@ -1,0 +1,8 @@
+version: 2.0
+
+id: node-debug
+
+about:
+  title: Node Debug
+  description: Debugging utility using environment regex, matches node core's debugging technique
+  repository: ahmadnassri/node-debug
