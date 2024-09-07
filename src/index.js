@@ -25,9 +25,9 @@ module.exports = function (key, { logger = console.debug, pid = true, perf = fal
       args.unshift(`${yellow(`(${elapsedTime}ms)`)}`)
     }
 
-    const prefix = (showPid) ? [dim(`${key} ${process.pid}`)] : [dim(key)]
+    const prefix = (showPid) ? dim(`${key} ${process.pid}`) : dim(key)
 
-    logger(...prefix, ...args)
+    logger(prefix, ...args)
   }
 
   if (!cache[key]) {

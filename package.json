@@ -32,7 +32,7 @@
     "test": "npm run test:cli -- test",
     "test:cli": "node --experimental-test-coverage --test",
     "test:watch": "npm run test:cli -- --watch test",
-    "test:ci": "npm run test:cli -- --test-reporter node-test-github-reporter test"
+    "test:ci": "npm run test"
   },
   "devDependencies": {
     "sinon": "^15.0.1"

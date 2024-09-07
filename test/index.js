@@ -9,6 +9,8 @@ beforeEach(() => {
 afterEach(() => {
   delete process.env.DEBUG
   delete process.env.NODE_DEBUG
+  delete process.env.DEBUG_PID
+  delete process.env.DEBUG_PERF
 
   console.debug.restore()
 })
@@ -24,7 +26,7 @@ describe('env', () => {
     debug('bar')
 
     t.assert.ok(console.debug.called)
-    t.assert.deepEqual(console.debug.lastCall.args, ['FOO', process.pid, 'bar'])
+    t.assert.deepEqual(console.debug.lastCall.args, [`FOO ${process.pid}`, 'bar'])
   })
 
   test('NODE_DEBUG=FOO', t => {
@@ -37,7 +39,7 @@ describe('env', () => {
     debug('bar')
 
     t.assert.ok(console.debug.called)
-    t.assert.deepEqual(console.debug.lastCall.args, ['FOO', process.pid, 'bar'])
+    t.assert.deepEqual(console.debug.lastCall.args, [`FOO ${process.pid}`, 'bar'])
   })
 
   test('DEBUG=BAR, FOO', t => {
@@ -50,7 +52,7 @@ describe('env', () => {
     debug('bar')
 
     t.assert.ok(console.debug.called)
-    t.assert.deepEqual(console.debug.lastCall.args, ['FOO', process.pid, 'bar'])
+    t.assert.deepEqual(console.debug.lastCall.args, [`FOO ${process.pid}`, 'bar'])
   })
 
   test('DEBUG=BAZ, BAR', t => {
@@ -77,7 +79,56 @@ describe('env', () => {
     debug('bar')
 
     t.assert.ok(console.debug.called)
-    t.assert.deepEqual(console.debug.lastCall.args, ['FOO', process.pid, 'bar'])
+    t.assert.deepEqual(console.debug.lastCall.args, [`FOO ${process.pid}`, 'bar'])
+  })
+
+  test('DEBUG_PERF=1', t => {
+    t.plan(2)
+
+    process.env.DEBUG = 'FOO'
+    process.env.DEBUG_PERF = '0'
+
+    const logger = sinon.stub()
+
+    const debug = debuglog('foo', { logger, perf: false })
+
+    debug('bar')
+
+    t.assert.ok(logger.called)
+    t.assert.equal(logger.lastCall.args[0], `FOO ${process.pid}`)
+  })
+
+  test('DEBUG_PID=1', t => {
+    t.plan(2)
+
+    process.env.DEBUG = 'FOO'
+    process.env.DEBUG_PID = '0'
+
+    const logger = sinon.stub()
+
+    const debug = debuglog('foo', { logger, pid: false })
+
+    debug('bar')
+
+    t.assert.ok(logger.called)
+    t.assert.equal(logger.lastCall.args[0], 'FOO')
+  })
+})
+
+describe('custom logger', () => {
+  test('custom logger', t => {
+    t.plan(2)
+
+    process.env.DEBUG = 'FOO'
+
+    const logger = sinon.stub()
+
+    const debug = debuglog('foo', { logger })
+
+    debug('bar')
+
+    t.assert.ok(logger.called)
+    t.assert.equal(logger.lastCall.args[0], `FOO ${process.pid}`)
   })
 })
 
@@ -95,17 +146,17 @@ describe('options', () => {
     t.assert.deepEqual(console.debug.lastCall.args, ['FOO', 'bar'])
   })
 
-  test('time', t => {
+  test('perf', t => {
     t.plan(2)
 
     process.env.DEBUG = 'FOO'
 
-    const debug = debuglog('foo', { time: true })
+    const debug = debuglog('foo', { perf: true })
 
     debug('bar')
 
     t.assert.ok(console.debug.called)
 
-    t.assert.match(console.debug.lastCall.args[1], /\[\u001B\[33m\d+ms\u001B\[39m\]/)
+    t.assert.match(console.debug.lastCall.args[1], /\(\d+ms\)/)
   })
 })
