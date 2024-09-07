@@ -28,6 +28,16 @@ Follows the exact same behaviour as [`util.debuglog`][debuglog] with some minor 
 
 The `debuglog()` method is used to create a function that conditionally writes debug messages to stderr based on the existence of the `DEBUG` or `NODE_DEBUG` environment variables. If the section name appears within the value of that environment variable, then the returned function operates similar to [`console.error()`][console-error]. If not, then the returned function is a no-op.
 
+### Environment Variables
+
+| Variable       | Description                                                                                      |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| `DEBUG`        | A comma-separated list of section names to enable                                                |
+| `NODE_DEBUG`   | A comma-separated list of section names to enable                                                |
+| `DEBUG_COLORS` | Enable/disable colors in output _(will also respect Node's `NO_COLORS` & `NODE_DISABLE_COLORS`)_ |
+| `DEBUG_PERF`   | Include/exclude performance time in output _(⚠️ will overwrite `perf` option)_                   |
+| `DEBUG_PID`    | Include/exclude process id in output _(⚠️ will overwrite `pid` option)_                          |
+
 ###### Examples
 
 ```js
@@ -73,8 +83,8 @@ secondary('secondary logger')
 ```shell
 $ NODE_DEBUG=foo:.* node app.js
 
-FOO:PRIMARY 28382: primary logger
-FOO:SECONDARY 28382: secondary logger
+FOO:PRIMARY 28382 primary logger
+FOO:SECONDARY 28382 secondary logger
 ```
 
 ###### Get Fancy
@@ -82,8 +92,8 @@ FOO:SECONDARY 28382: secondary logger
 ```shell
 $ DEBUG="(F|O)+:.*" node app.js
 
-FOO:PRIMARY 28274: primary logger
-FOO:SECONDARY 28274: secondary logger
+FOO:PRIMARY 28274 primary logger
+FOO:SECONDARY 28274 secondary logger
 ```
 
 #### remove PID
@@ -109,9 +119,20 @@ debug('hello from foo [%d]', 123)
 ```
 
 ```plain
-FOO 3245 [+65ms]: hello from foo [123] +0ms
+FOO 3245 (65ms) hello from foo [123] +0ms
 ```
 
+#### Disable Colors
+
+```shell
+$ DEBUG_COLORS=0 node app.js
+```
+
+#### Disable Performance Time
+
+```shell
+$ DEBUG_PERF=0 node app.js
+```
 
 [debuglog]: https://nodejs.org/api/util.html#utildebuglogsection-callback
 [console-error]: https://nodejs.org/api/console.html#consoleerrordata-args
