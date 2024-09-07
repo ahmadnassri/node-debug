@@ -28,15 +28,13 @@
   ],
   "main": "src/index.js",
   "scripts": {
-    "test": "tap test --no-coverage",
-    "test:ci": "tap test --100",
-    "test:watch": "tap test --watch",
-    "test:report": "opener coverage/lcov-report/index.html"
+    "start": "node src/index.js",
+    "test": "npm run test:cli -- test",
+    "test:cli": "node --experimental-test-coverage --test",
+    "test:watch": "npm run test:cli -- --watch test",
+    "test:ci": "npm run test:cli -- --test-reporter node-test-github-reporter test"
   },
   "devDependencies": {
-    "tap": "^16.3.2"
-  },
-  "dependencies": {
     "sinon": "^15.0.1"
   }
 }

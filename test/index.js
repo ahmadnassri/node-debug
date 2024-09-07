@@ -1,80 +1,111 @@
 const debuglog = require('..')
-const { beforeEach, afterEach, test } = require('tap')
+const { beforeEach, afterEach, describe, test } = require('node:test')
 const sinon = require('sinon')
 
 beforeEach(() => {
-  sinon.stub(console, 'error')
-});
+  sinon.stub(console, 'debug')
+})
 
 afterEach(() => {
   delete process.env.DEBUG
   delete process.env.NODE_DEBUG
 
-  console.error.restore()
+  console.debug.restore()
 })
 
-test('DEBUG=FOO', assert => {
-  assert.plan(2)
+describe('env', () => {
+  test('DEBUG=FOO', t => {
+    t.plan(2)
 
-  process.env.DEBUG = 'FOO'
+    process.env.DEBUG = 'FOO'
 
-  const debug = debuglog('foo')
+    const debug = debuglog('foo')
 
-  debug('bar')
+    debug('bar')
 
-  assert.ok(console.error.called)
-  assert.same(console.error.lastCall.args, ['%s %d: %s', 'FOO', process.pid, 'bar'])
+    t.assert.ok(console.debug.called)
+    t.assert.deepEqual(console.debug.lastCall.args, ['FOO', process.pid, 'bar'])
+  })
+
+  test('NODE_DEBUG=FOO', t => {
+    t.plan(2)
+
+    process.env.NODE_DEBUG = 'FOO'
+
+    const debug = debuglog('foo')
+
+    debug('bar')
+
+    t.assert.ok(console.debug.called)
+    t.assert.deepEqual(console.debug.lastCall.args, ['FOO', process.pid, 'bar'])
+  })
+
+  test('DEBUG=BAR, FOO', t => {
+    t.plan(2)
+
+    process.env.DEBUG = 'BAR, FOO'
+
+    const debug = debuglog('foo')
+
+    debug('bar')
+
+    t.assert.ok(console.debug.called)
+    t.assert.deepEqual(console.debug.lastCall.args, ['FOO', process.pid, 'bar'])
+  })
+
+  test('DEBUG=BAZ, BAR', t => {
+    t.plan(1)
+
+    process.env.DEBUG = 'BAZ, BAR'
+
+    const debug = debuglog('foo')
+
+    debug('bar')
+
+    t.assert.ok(!console.debug.called, 'should not trigger')
+
+    debug('bar')
+  })
+
+  test('DEBUG=F.*', t => {
+    t.plan(2)
+
+    process.env.DEBUG = 'F.*'
+
+    const debug = debuglog('foo')
+
+    debug('bar')
+
+    t.assert.ok(console.debug.called)
+    t.assert.deepEqual(console.debug.lastCall.args, ['FOO', process.pid, 'bar'])
+  })
 })
 
-test('NODE_DEBUG=FOO', assert => {
-  assert.plan(2)
+describe('options', () => {
+  test('pid', t => {
+    t.plan(2)
 
-  process.env.NODE_DEBUG = 'FOO'
+    process.env.DEBUG = 'FOO'
 
-  const debug = debuglog('foo')
+    const debug = debuglog('foo', { pid: false })
 
-  debug('bar')
+    debug('bar')
 
-  assert.ok(console.error.called)
-  assert.same(console.error.lastCall.args, ['%s %d: %s', 'FOO', process.pid, 'bar'])
-})
+    t.assert.ok(console.debug.called)
+    t.assert.deepEqual(console.debug.lastCall.args, ['FOO', 'bar'])
+  })
 
-test('DEBUG=BAR, FOO', assert => {
-  assert.plan(2)
+  test('time', t => {
+    t.plan(2)
 
-  process.env.DEBUG = 'BAR, FOO'
+    process.env.DEBUG = 'FOO'
 
-  const debug = debuglog('foo')
+    const debug = debuglog('foo', { time: true })
 
-  debug('bar')
+    debug('bar')
 
-  assert.ok(console.error.called)
-  assert.same(console.error.lastCall.args, ['%s %d: %s', 'FOO', process.pid, 'bar'])
-})
+    t.assert.ok(console.debug.called)
 
-test('DEBUG=BAZ, BAR', assert => {
-  assert.plan(1)
-
-  process.env.DEBUG = 'BAZ, BAR'
-
-  const debug = debuglog('foo')
-
-  debug('bar')
-
-  assert.notOk(console.error.called, 'should not trigger')
-
-  debug('bar')
-})
-
-test('DEBUG=F.*', assert => {
-  assert.plan(2)
-
-  process.env.DEBUG = 'F.*'
-
-  const debug = debuglog('foo')
-
-  debug('bar')
-
-  assert.ok(console.error.called)
-  assert.same(console.error.lastCall.args, ['%s %d: %s', 'FOO', process.pid, 'bar'])
+    t.assert.match(console.debug.lastCall.args[1], /\[\u001B\[33m\d+ms\u001B\[39m\]/)
+  })
 })
