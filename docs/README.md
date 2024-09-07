@@ -26,7 +26,7 @@ Follows the exact same behaviour as [`util.debuglog`][debuglog] with some minor 
 
 > Returns: `<Function>` The logging function
 
-The `debuglog()` method is used to create a function that conditionally writes debug messages to stderr based on the existence of the `DEBUG` or `NODE_DEBUG` environment variables. If the section name appears within the value of that environment variable, then the returned function operates similar to [`console.error()`][console-error]. If not, then the returned function is a no-op.
+The `debuglog()` method is used to create a function that conditionally writes debug messages to stderr based on the existence of the `DEBUG` or `NODE_DEBUG` environment variables. If the section name appears within the value of that environment variable, then the returned function operates similar to [`console.debug()`][console-debug]. If not, then the returned function is a no-op.
 
 ### Environment Variables
 
@@ -135,4 +135,4 @@ $ DEBUG_PERF=0 node app.js
 ```
 
 [debuglog]: https://nodejs.org/api/util.html#utildebuglogsection-callback
-[console-error]: https://nodejs.org/api/console.html#consoleerrordata-args
+[console-debug]: https://nodejs.org/api/console.html#consoledebugdata-args
