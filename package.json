@@ -35,6 +35,6 @@
     "test:ci": "npm run test"
   },
   "devDependencies": {
-    "sinon": "^15.0.1"
+    "sinon": "^18.0.1"
   }
 }
